@@ -1,6 +1,6 @@
-class View<T>{
+abstract class View<T>{
 
-    protected _elemento: Element;
+    private _elemento: Element;
 
     constructor(seletor: string){
 
@@ -12,8 +12,4 @@ class View<T>{
         this._elemento.innerHTML = this.template(model);
     }
 
-    template(model: T): string{
-
-        throw new Error("O método template tem que ser implementado!");
-    }
-}
+    abstract template(model: T): string;
