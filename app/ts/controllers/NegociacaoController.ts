@@ -1,7 +1,5 @@
-import { Negociacoes } from "../models/Negociacoes";
-import { NegociacoesView } from "../views/NegociacoesView";
-import { MensagemView } from "../views/MensagemView";
-import { Negociacao } from "../models/Negociacao";
+import { Negociacoes, Negociacao } from "../models/index";
+import { NegociacoesView, MensagemView } from "../views/index";
 
 export class NegociacaoController{
 
@@ -16,15 +14,22 @@ export class NegociacaoController{
         this._inputData = $('#data');
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
-        console.log(this._negociacoesView.update(this._negociacoes));
+        this._negociacoesView.update(this._negociacoes);
     }
 
     adiciona(event: Event){
 
         event.preventDefault();
 
+        let data = new Date(this._inputData.val().replace(/-/g, ','))
+
+        if(!this._ehDiaUtil(data)){
+            this._mensagemView.update('Somente negociações em dias úteis, por favor!');
+            return
+        }
+
         const negociacao = new Negociacao(
-            new Date(this._inputData.val().replace(/-/g, ',')),
+            data,
             parseInt(this._inputQuantidade.val()),
             parseFloat(this._inputValor.val())
         )
@@ -34,4 +39,19 @@ export class NegociacaoController{
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update('Negociação cadastrada com Sucesso!');
     }
+
+    private _ehDiaUtil(data: Date){
+
+        return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
+    }
+}
+
+enum DiaDaSemana{
+    Domingo,
+    Segunda,
+    Terca,
+    Quarta,
+    Quinta,
+    Sexta,
+    Sabado
 }
