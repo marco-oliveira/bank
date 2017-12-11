@@ -1,4 +1,4 @@
-abstract class View<T> {
+export abstract class View<T> {
 
     private _elemento: JQuery;
 
@@ -9,7 +9,7 @@ abstract class View<T> {
 
     update(model: T): void {
 
-        this._elemento.innerHTML = this.template(model);
+        this._elemento.html(this.template(model));
     }
 
     abstract template(model: T): string;

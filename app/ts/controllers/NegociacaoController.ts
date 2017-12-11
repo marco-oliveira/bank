@@ -1,4 +1,9 @@
-class NegociacaoController{
+import { Negociacoes } from "../models/Negociacoes";
+import { NegociacoesView } from "../views/NegociacoesView";
+import { MensagemView } from "../views/MensagemView";
+import { Negociacao } from "../models/Negociacao";
+
+export class NegociacaoController{
 
     private _inputData: JQuery;
     private _inputQuantidade: JQuery;
@@ -11,7 +16,7 @@ class NegociacaoController{
         this._inputData = $('#data');
         this._inputQuantidade = $('#quantidade');
         this._inputValor = $('#valor');
-        this._negociacoesView.update(this._negociacoes);
+        console.log(this._negociacoesView.update(this._negociacoes));
     }
 
     adiciona(event: Event){
@@ -19,9 +24,9 @@ class NegociacaoController{
         event.preventDefault();
 
         const negociacao = new Negociacao(
-            new Date(this._inputData.value.replace(/-/g, ',')),
-            parseInt(this._inputQuantidade.value),
-            parseFloat(this._inputValor.value)
+            new Date(this._inputData.val().replace(/-/g, ',')),
+            parseInt(this._inputQuantidade.val()),
+            parseFloat(this._inputValor.val())
         )
 
         this._negociacoes.adiciona(negociacao);
