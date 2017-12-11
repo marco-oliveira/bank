@@ -1,6 +1,5 @@
 const controller = new NegociacaoController();
 
-    document
-        .querySelector('form')
+    $('form')
         .addEventListener("submit",
             controller.adiciona.bind(controller));

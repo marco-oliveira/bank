@@ -1,15 +1,16 @@
-abstract class View<T>{
+abstract class View<T> {
 
-    private _elemento: Element;
+    private _elemento: JQuery;
 
-    constructor(seletor: string){
+    constructor(seletor: string) {
 
-        this._elemento = document.querySelector(seletor);
+        this._elemento = $(seletor);
     }
 
-    update(model: T): void{
+    update(model: T): void {
 
         this._elemento.innerHTML = this.template(model);
     }
 
     abstract template(model: T): string;
+}
