@@ -1,6 +1,7 @@
 import { Negociacoes, Negociacao } from "../models/index";
 import { NegociacoesView, MensagemView } from "../views/index";
-import { logarTempoDeExecucao, domInject } from "../helpers/decorators/index";
+import { domInject, throttle } from "../helpers/decorators/index";
+import { NegociacaoService } from "../services/index";
 
 export class NegociacaoController{
 
@@ -17,16 +18,41 @@ export class NegociacaoController{
     private _negociacoesView = new NegociacoesView('#negociacoesView');
     private _mensagemView = new MensagemView('#mensagemView');
 
+    private _service = new NegociacaoService();
+
     constructor(){
 
         this._negociacoesView.update(this._negociacoes);
     }
 
-    @logarTempoDeExecucao(true)
-    adiciona(event: Event){
+    @throttle()
+    importarDados(): void{
 
-        let t1 = performance.now();
-        event.preventDefault();
+       /* function isOk(res: Response){
+            if (res.ok){
+                return res;
+            }else {
+                throw new Error(res.statusText);
+            }
+        }*/
+
+        this._service.obterNegociacoes(function (res) {
+            if (res.ok){
+                return res;
+            }else {
+                throw new Error(res.statusText);
+            }
+        })
+            .then(negociacoes =>{
+                negociacoes.forEach(negociacao =>
+                    this._negociacoes.adiciona(negociacao));
+                this._negociacoesView.update(this._negociacoes);
+            })
+
+    }
+
+    @throttle()
+    adiciona(){
 
         let data = new Date(this._inputData.val().replace(/-/g, ','))
 
@@ -46,8 +72,6 @@ export class NegociacaoController{
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update('Negociação cadastrada com Sucesso!');
 
-        let t2 =performance.now();
-        console.log(`Tempo de execução do método adiciona(): ${(t2 - t1)/1000} segundos`);
     }
 
     private _ehDiaUtil(data: Date){
