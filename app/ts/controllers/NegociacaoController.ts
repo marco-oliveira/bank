@@ -1,10 +1,10 @@
-import { Negociacoes, Negociacao } from "../models/index";
-import { NegociacoesView, MensagemView } from "../views/index";
-import { domInject, throttle } from "../helpers/decorators/index";
-import { NegociacaoService } from "../services/index";
+import {Negociacoes, Negociacao} from "../models/index";
+import {NegociacoesView, MensagemView} from "../views/index";
+import {domInject, throttle} from "../helpers/decorators/index";
+import {NegociacaoService} from "../services/index";
 import {imprime} from "../helpers/Utils";
 
-export class NegociacaoController{
+export class NegociacaoController {
 
     @domInject('#data')
     private _inputData: JQuery;
@@ -21,43 +21,44 @@ export class NegociacaoController{
 
     private _service = new NegociacaoService();
 
-    constructor(){
+    constructor() {
 
         this._negociacoesView.update(this._negociacoes);
     }
 
     @throttle()
-    importarDados(): void{
-
-       /* function isOk(res: Response){
-            if (res.ok){
-                return res;
-            }else {
-                throw new Error(res.statusText);
-            }
-        }*/
+    importarDados(): void {
 
         this._service.obterNegociacoes(function (res) {
-            if (res.ok){
+            if (res.ok) {
                 return res;
-            }else {
+            } else {
                 throw new Error(res.statusText);
             }
         })
-            .then(negociacoes =>{
-                negociacoes.forEach(negociacao =>
-                    this._negociacoes.adiciona(negociacao));
+            .then(negociacoesParaImportar => {
+
+                const negociacoesJaImportadas = this._negociacoes.paraArray();
+
+                negociacoesParaImportar
+                    .filter(negociacao =>
+                        !negociacoesJaImportadas.some(jaImportada =>
+                            negociacao.ehIgual(jaImportada)))
+                    .forEach(negociacao =>
+                        this._negociacoes.adiciona(negociacao));
+
                 this._negociacoesView.update(this._negociacoes);
             })
+            .catch(err => this._mensagemView.update(err.message));
 
     }
 
     @throttle()
-    adiciona(){
+    adiciona() {
 
         let data = new Date(this._inputData.val().replace(/-/g, ','))
 
-        if(!this._ehDiaUtil(data)){
+        if (!this._ehDiaUtil(data)) {
             this._mensagemView.update('Somente negociações em dias úteis, por favor!');
             return
         }
@@ -77,13 +78,13 @@ export class NegociacaoController{
 
     }
 
-    private _ehDiaUtil(data: Date){
+    private _ehDiaUtil(data: Date) {
 
         return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
     }
 }
 
-enum DiaDaSemana{
+enum DiaDaSemana {
     Domingo,
     Segunda,
     Terca,

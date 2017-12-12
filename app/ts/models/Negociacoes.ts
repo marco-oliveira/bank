@@ -1,7 +1,7 @@
 import { Negociacao } from "./Negociacao";
-import {Imprimivel} from "./Imprimivel";
+import {MeuObjeto} from "./MeuObjeto";
 
-export class Negociacoes implements Imprimivel{
+export class Negociacoes implements MeuObjeto<Negociacoes>{
 
     private _negociacoes: Array<Negociacao> = [];
 
@@ -20,5 +20,9 @@ export class Negociacoes implements Imprimivel{
         ${JSON.stringify(this._negociacoes)}
         
         `);
+    }
+
+    ehIgual(objeto: Negociacoes): boolean {
+        return JSON.stringify(this._negociacoes) == JSON.stringify(objeto.paraArray());
     }
 }
