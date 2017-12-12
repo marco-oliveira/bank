@@ -1,24 +1,31 @@
 import { Negociacoes, Negociacao } from "../models/index";
 import { NegociacoesView, MensagemView } from "../views/index";
+import { logarTempoDeExecucao, domInject } from "../helpers/decorators/index";
 
 export class NegociacaoController{
 
+    @domInject('#data')
     private _inputData: JQuery;
+
+    @domInject('#quantidade')
     private _inputQuantidade: JQuery;
+
+    @domInject('#valor')
     private _inputValor: JQuery;
+
     private _negociacoes = new Negociacoes();
     private _negociacoesView = new NegociacoesView('#negociacoesView');
     private _mensagemView = new MensagemView('#mensagemView');
+
     constructor(){
 
-        this._inputData = $('#data');
-        this._inputQuantidade = $('#quantidade');
-        this._inputValor = $('#valor');
         this._negociacoesView.update(this._negociacoes);
     }
 
+    @logarTempoDeExecucao(true)
     adiciona(event: Event){
 
+        let t1 = performance.now();
         event.preventDefault();
 
         let data = new Date(this._inputData.val().replace(/-/g, ','))
@@ -38,6 +45,9 @@ export class NegociacaoController{
 
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update('Negociação cadastrada com Sucesso!');
+
+        let t2 =performance.now();
+        console.log(`Tempo de execução do método adiciona(): ${(t2 - t1)/1000} segundos`);
     }
 
     private _ehDiaUtil(data: Date){
