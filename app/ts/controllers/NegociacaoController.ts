@@ -2,6 +2,7 @@ import { Negociacoes, Negociacao } from "../models/index";
 import { NegociacoesView, MensagemView } from "../views/index";
 import { domInject, throttle } from "../helpers/decorators/index";
 import { NegociacaoService } from "../services/index";
+import {imprime} from "../helpers/Utils";
 
 export class NegociacaoController{
 
@@ -68,6 +69,8 @@ export class NegociacaoController{
         )
 
         this._negociacoes.adiciona(negociacao);
+
+        imprime(negociacao, this._negociacoes);
 
         this._negociacoesView.update(this._negociacoes);
         this._mensagemView.update('Negociação cadastrada com Sucesso!');
